@@ -17,6 +17,7 @@ module.exports = (app) => {
     app.post('/api/jobs',jobsController.employeerjoblist);
     app.post('/api/jobs/all',jobsController.listAll);
     app.post('/api/jobs/users',jobsController.usersJobList);
+    app.post('/api/jobs/delete',jobsController.deleteJob);
     app.post('/api/users',usersController.listUser);
     app.post('/api/getuserdetails',usersController.getdetails)
     app.post('/api/notifications',usersController.getNotifications);

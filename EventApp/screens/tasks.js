@@ -96,6 +96,9 @@ export default class Tasks extends Component
             {
                return alert(items.description);
             }
+            else{
+                return alert('No task for the day!!');
+            }
         })
     }
     getmarkedDates = () =>

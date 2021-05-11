@@ -1,10 +1,10 @@
-import { Body, Button, Card, CardItem, Container, Icon, Content, Header, Left, Root, Text, Thumbnail, View } from 'native-base';
+import { Body, Button, Card, CardItem, Container, Icon, Content, Header, Left, Root, Text,Spinner, Thumbnail, Toast, View } from 'native-base';
 import React, { Component } from 'react';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import {RefreshControl,ScrollView} from 'react-native';
+import {RefreshControl,ScrollView,Alert} from 'react-native';
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
@@ -25,7 +25,6 @@ export default class Home extends Component
         let userData = await AsyncStorage.getItem('userData');
         let data = JSON.parse(userData);
         this.setState({id:data.id,name:data.fullname,email:data.email,phoneNo:data.contactNo,location:data.address})
-        console.log(this.state.id);
         fetch('http://10.0.2.2:8000/api/jobs/users',{    
             method:'POST',
             headers: {
@@ -37,7 +36,6 @@ export default class Home extends Component
             })
             }).then((response)=> response.json())
             .then( async(res)=>{
-                console.log(res.data);
                 this.setState({tableData:res.data})
             }).catch((err)=>console.log(err));
       }
@@ -61,7 +59,6 @@ export default class Home extends Component
           .then( async(res)=> {
               await AsyncStorage.setItem('userData', JSON.stringify(res.data));
               let data = res.data[0];
-              console.log(data);
               this.setState({id:data.id,name:data.fullname,email:data.email,phoneNo:data.contactNo,location:data.address})
           }).catch((err)=>console.log(err));
           fetch('http://10.0.2.2:8000/api/jobs/users',{    
@@ -75,14 +72,13 @@ export default class Home extends Component
             })
             }).then((response)=> response.json())
             .then( async(res)=>{
-                console.log('Fuck you!!')
-                console.log(res.data);
-                
                 this.setState({tableData:res.data})
             }).catch((err)=>console.log(err));
             this.setState({refreshing:false});
         });
       }
+
+
     render() 
     {
         const Drawer = createDrawerNavigator();
@@ -119,8 +115,8 @@ export default class Home extends Component
                             </CardItem>
                         </Card>
                         <Text>Accepted Task</Text>
-                        <View style={{flex:1,padding: 10, paddingTop: 7, backgroundColor: '#fff'}}>
-                        {this.renderRow()}
+                        <View style={{padding: 10, paddingTop: 7}}>
+                        {this.state.refreshing? <Spinner /> :this.renderRow()}
                         </View>
                     </Content>
                     </ScrollView>
@@ -129,26 +125,38 @@ export default class Home extends Component
             
         );
     }
+   
 
     renderRow()
     {
         let data = this.state.tableData;
-        data.map((items)=>{
-            console.log(items.workingHours, items.starttime, items.time);
-        })
+    
         if(data.length == 0)
         {
           return <View style={{margin:110,flex:1}}><Text>No any Tasks!!</Text></View>
         }else{
-           return <View style={{flexDirection:'row'}}>
+           return <View >
                 {
                     data.map((items)=>{
-                       return <Card style={{flex:1}} key={items.id}>
-                            <CardItem style={{flexDirection:'column'}} >
-                                <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Task:</Text><Text>{items.title}</Text></View>
-                                <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Time Frame:</Text><Text><Text>{items.starttime} - {items.finishtime}</Text></Text></View>
-                                <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Working Days:</Text><Text><Text>{items.workingHours}</Text></Text></View>
+                       return <Card key={items.id}>
+                            <CardItem style={{flexDirection:'row', alignContent:'stretch', justifyContent:'space-between'}}>
+                                <View style={{flexDirection:'column'}}>
+                                    <View style={{flexDirection:'row', alignItems:'center'}}>
+                                        <Text>Task:</Text>
+                                        <Text>{items.title}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={{marginRight:5}}>Time Frame:</Text>
+                                        <Text>{items.starttime} - {items.finishtime}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={{marginRight:5}}>Working Days:</Text>
+                                        <Text>{items.workingHours}</Text>
+                                    </View> 
+                                </View>
+                                
                             </CardItem>
+
                         </Card>
                     })
                 }
@@ -156,5 +164,8 @@ export default class Home extends Component
         }
         // return <View><Text>Test</Text></View>
     }
+
+
+    
 
 }

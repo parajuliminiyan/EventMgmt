@@ -56,6 +56,21 @@ module.exports = {
         })
     },
 
+    async deleteJob(req,res)
+    {
+        await Jobs.destroy({
+            where:{
+                id:req.body.id
+            }
+        }).then((data)=>{
+            res.send({
+                status:'Success',
+                message:'Job Deleted Successfully',
+                data:data
+            })
+        })
+    }
+
     /*  
         Post.findAll({
         where: {

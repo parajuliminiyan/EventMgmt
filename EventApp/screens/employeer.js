@@ -1,8 +1,8 @@
-import { Body, Button, Card, CardItem, Container, Content, Header, Icon, Label, Left, Root, Text, Thumbnail, View } from 'native-base';
+import { Body, Button, Card, CardItem, Container, Content, Header, Icon, Label, Left, Root, Spinner, Toast, Text, Thumbnail, View } from 'native-base';
 import React, { Component } from 'react';
 import {RefreshControl} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native';
+import { ScrollView,Alert } from 'react-native';
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
@@ -16,15 +16,6 @@ export default class Employeer extends Component
         website: '',
         phoneno:'',
         address: '',
-        tableHead: ['Days', 'Universitys', 'Shifts'],
-        tableData: [
-          ['Sun', '2', '9 am - 5 p.m '],
-          ['Mon', 'b', '11 a.m - 3 p.m'],
-          ['Tues', '2', '9 am - 5 p.m'],
-          ['Wedn', 'b', '11 a.m - 3 p.m'],
-          ['Thus', 'b', '9 am - 5 p.m '],
-          ['Fri', 'b', '11 a.m - 3 p.m']
-        ],
         jobs:[],
         refreshing:false
       }
@@ -91,6 +82,46 @@ export default class Employeer extends Component
         this.setState({refreshing:false});
         });
       }
+      async deleteJob(jobid) 
+      {
+          Alert.alert(
+              'Dele Job',
+              'Are you sure you want to delete??',
+              [
+                {
+                  text: 'No',
+                  onPress: () => this.props.navigation.navigate('Drawer'),
+                  style: 'cancel',
+                },
+                {text: 'Yes', onPress: () => {
+                    this.setState({refreshing:true});
+                  fetch('http://10.0.2.2:8000/api/jobs/delete',{    
+                      method:'POST',
+                      headers: {
+                      Accept: 'application/json',
+                      'Content-Type':'application/json'
+                      },
+                      body: JSON.stringify({
+                          id:jobid
+                      })
+                      }).then((response)=> response.json())
+                      .then((res)=>{
+                          Toast.show({
+                              text: res.message,
+                              buttonText: 'Okay',
+                              duration:3000,
+                              textStyle: {fontSize:17},
+                              type:"danger"
+                            });
+                          this.onRefresh();
+                      }).catch((err)=>console.log(err));
+                  }},
+              ],
+              {cancelable: false},
+            );
+  
+  
+      }
     render() 
     {
         // const Drawer = createDrawerNavigator();
@@ -127,7 +158,7 @@ export default class Employeer extends Component
                             </CardItem>
                         </Card>
                         <Text>Jobs Lists</Text>
-                        {this.renderJobList()}
+                        {this.state.refreshing? <Spinner /> : this.renderJobList()}
                         
                     </Content>
                     </ScrollView>
@@ -145,18 +176,22 @@ export default class Employeer extends Component
         }
         return this.state.jobs.map((item)=> {
             return <Card key={item.id} style={{marginBottom:10}}>
-                <CardItem >
+                <CardItem style={{ justifyContent:'space-between'}} >
                        <View style={{flex:1}}>
-                       <Label style={{fontWeight:'bold'}}>Title</Label>
-                        <Text >{item.title}</Text>
-                        <Label style={{fontWeight:'bold'}}>workingHours</Label>
-                        <Text>{item.workingHours}</Text>
-                        <Label style={{fontWeight:'bold'}}>Start Date</Label>
-                        <Text>{item.startdate}</Text>
-                        <Label style={{fontWeight:'bold'}}>Working Days</Label>
-                        <Text>{item.workingdays}</Text>
+                            <Label style={{fontWeight:'bold'}}>Title</Label>
+                            <Text >{item.title}</Text>
+                            <Label style={{fontWeight:'bold'}}>workingHours</Label>
+                            <Text>{item.workingHours}</Text>
+                            <Label style={{fontWeight:'bold'}}>Start Date</Label>
+                            <Text>{item.startdate}</Text>
+                            <Label style={{fontWeight:'bold'}}>Working Days</Label>
+                            <Text>{item.workingdays}</Text>
                        </View>
+                        <View>
+                            <Button bordered onPress={()=>this.deleteJob(item.id)} ><Icon  type="FontAwesome" name="trash" /></Button>
+                        </View>
                 </CardItem>
+                
             </Card>
         })
     }
