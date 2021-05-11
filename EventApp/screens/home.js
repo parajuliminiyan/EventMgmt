@@ -147,7 +147,7 @@ export default class Home extends Component
                             <CardItem style={{flexDirection:'column'}} >
                                 <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Task:</Text><Text>{items.title}</Text></View>
                                 <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Time Frame:</Text><Text><Text>{items.starttime} - {items.finishtime}</Text></Text></View>
-                                <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Working Hours:</Text><Text><Text>{items.workingHours}</Text></Text></View>
+                                <View style={{flexDirection:'row'}}><Text style={{marginRight:5}}>Working Days:</Text><Text><Text>{items.workingHours}</Text></Text></View>
                             </CardItem>
                         </Card>
                     })

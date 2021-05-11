@@ -7,7 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default class Tasks extends Component
 {
     state = {
-        markedDates:{},
+        markedDates:[],
+        dateDesc:[],
         task:'',
         data:[],
         id:'',
@@ -29,8 +30,18 @@ export default class Tasks extends Component
             })
             }).then((response)=> response.json())
             .then( async(res)=>{
-                this.setState({data:res.data})
+                // this.setState({data:res.data})
+            let remotedate = res.data;
+            let dates = [];
+            let datedata = [];
+            remotedate.forEach((items)=>{
+                    datedata.push(items);
+                   return dates.push(items.startdate);
+            });
+            console.log(dates);
+            this.setState({markedDates:dates,dateDesc:datedata});
             }).catch((err)=>console.log(err));
+            
     }
     render()
     {
@@ -49,7 +60,6 @@ export default class Tasks extends Component
                 <View>
             <CalendarList
              // Callback which gets executed when visible months change in scroll view. Default = undefined
-             onVisibleMonthsChange={(months) => {}}
              // Max amount of months allowed to scroll to the past. Default = 50
              pastScrollRange={5}
              // Max amount of months allowed to scroll to the future. Default = 50
@@ -58,7 +68,7 @@ export default class Tasks extends Component
              scrollEnabled={true}
              // Enable or disable vertical scroll indicator. Default = false
              showScrollIndicator={true}
-             onDayPress={(day) => alert(`${this.state.task}`)}
+             onDayPress={(day)=>this.dayPress(day)}
             //  maxDate={new Date()}
              markingType={'period'}
              markedDates={this.getmarkedDates()}
@@ -78,16 +88,23 @@ export default class Tasks extends Component
 
         )
     }
-    getmarkedDates()
+    dayPress(day)
     {
-        let data = this.state.data;
-        let dates = [];   
-        data.map((items)=>{
-               return dates.push(items.startdate);
-            });
+        let date = day.dateString;
+        return this.state.dateDesc.map((items)=>{
+            if(items.startdate == date)
+            {
+               return alert(items.description);
+            }
+        })
+    }
+    getmarkedDates = () =>
+    {
+        let dates = this.state.markedDates;
         let mark = {
             [dates]:{marked: true,  dotColor: 'red', activeOpacity: 0,selectedColor: 'blue'}
         }  
+        console.log(dates);
         return mark;
         console.log(mark);
     }
