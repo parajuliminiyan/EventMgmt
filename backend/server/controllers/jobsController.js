@@ -5,7 +5,6 @@ module.exports = {
 
     async create(req, res) {
         return Jobs.create(req.body).then((job) =>{
-            console.log(job);
             res.status(201).send({
                 status:'Success',
                 message:'Job Successfully Created!',
@@ -36,8 +35,6 @@ module.exports = {
     },
     async usersJobList(req,res)
     {
-        let id = req.body.userid;
-        console.log(id);
         return await Jobs.findAll(
             {
                 where:{
@@ -71,15 +68,4 @@ module.exports = {
         })
     }
 
-    /*  
-        Post.findAll({
-        where: {
-            [Op.and]: [
-            { authorId: 12 },
-            { status: 'active' }
-            ]
-        }
-        });
-    
-    */
 }

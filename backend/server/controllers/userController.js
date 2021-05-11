@@ -140,15 +140,6 @@ module.exports = {
     },
 
 
-    /* 
-        await User.update({ lastName: "Doe" }, {
-        where: {
-            lastName: null
-        }
-        });
-    
-    */
-
     async updateNotifications(req,res) 
     {
         return await notifications.destroy({where:{id:req.body.id}}).then((nots)=>{

@@ -24,6 +24,4 @@ module.exports = (app) => {
     app.post('/api/notifications/create',usersController.createNotifications);
     app.post('/api/notifications/update',usersController.updateNotifications);
     
-    // app.post('/api/employeer/login', emplyeerController.login);
-    // app.post('/api/employeer/signup', emplyeerController.create);
 }
