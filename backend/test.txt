@@ -1,0 +1,11 @@
+
+// npx sequelize model:generate --name Employee --attributes name:String,age:String,sex:String,contactNo:BigInt,qualification:String,experience:String
+
+// npx sequelize model:generate --name Employeer --attributes email:String,password:String,name:String,affiliation:String,webite:String,phoneNumber:BigInt,address:String
+
+
+// npx sequelize model:generate --name Notifications --attributes topic:String,time:DATE,date:DATEONLY,message:String
+
+npx sequelize model:generate --name Users --attributes email:String,password:String,fullname:String
+
+npx sequelize model:generate --name jobs --attributes title:String,workingHours:String,starttime:String,finishtime:String,startdate:DATEONLY,workingdays:String,description:text,postedby:String
